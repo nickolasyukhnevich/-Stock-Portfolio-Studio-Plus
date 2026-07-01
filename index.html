@@ -1,0 +1,1776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" type="image/png" sizes="48x48" href="icons8-profit-analysis-48.png">
+<link rel="shortcut icon" href="icons8-profit-analysis-48.png">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Stock Profit Studio</title>
+<style>
+:root{
+  --bg1:#23272c;
+  --bg2:#171b20;
+  --panel:#10151b;
+  --panel2:#141b23;
+  --line:rgba(143,231,255,.22);
+  --blue:#8fe7ff;
+  --blue2:#35cfff;
+  --white:#ffffff;
+  --muted:rgba(255,255,255,.68);
+  --green:#6dffb0;
+  --red:#ff7b8a;
+  --gold:#ffd36a;
+  --shadow:0 22px 70px rgba(0,0,0,.45);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:Segoe UI,Arial,sans-serif;
+  color:var(--white);
+  background-color:var(--bg1);
+  background-image:
+    radial-gradient(circle at 12% 8%, rgba(143,231,255,.14), transparent 26%),
+    radial-gradient(circle at 85% 16%, rgba(255,255,255,.07), transparent 24%),
+    radial-gradient(circle at 60% 92%, rgba(53,207,255,.09), transparent 28%),
+    linear-gradient(135deg, rgba(255,255,255,.045) 0 1px, transparent 1px 10px),
+    linear-gradient(180deg,#2b3036 0%,#1f242a 45%,#11161b 100%);
+  background-blend-mode:screen,normal,screen,overlay,normal;
+}
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  background:
+    linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(255,255,255,.018) 1px, transparent 1px);
+  background-size:42px 42px;
+  mask-image:linear-gradient(to bottom, rgba(0,0,0,.8), transparent 88%);
+}
+.app{
+  width:min(1220px,94vw);
+  margin:0 auto;
+  padding:32px 0 44px;
+}
+.hero{
+  display:grid;
+  grid-template-columns:1.2fr .8fr;
+  gap:22px;
+  align-items:stretch;
+  margin-bottom:22px;
+}
+.hero-card,.panel{
+  background:linear-gradient(180deg,rgba(20,27,35,.96),rgba(10,14,18,.96));
+  border:1px solid var(--line);
+  border-radius:28px;
+  box-shadow:var(--shadow),0 0 34px rgba(143,231,255,.10);
+  overflow:hidden;
+}
+.hero-card{
+  padding:28px;
+  position:relative;
+}
+.hero-card::after{
+  content:"";
+  position:absolute;
+  right:-70px;
+  top:-90px;
+  width:260px;
+  height:260px;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(143,231,255,.18), transparent 68%);
+}
+.kicker{
+  color:var(--blue);
+  letter-spacing:3px;
+  font-size:12px;
+  text-transform:uppercase;
+  font-weight:800;
+}
+h1{
+  margin:10px 0 12px;
+  font-size:clamp(30px,5vw,58px);
+  line-height:1;
+  letter-spacing:-1.5px;
+}
+.sub{
+  max-width:710px;
+  color:var(--muted);
+  font-size:16px;
+  line-height:1.55;
+}
+.hero-actions{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-top:22px;
+}
+.pill{
+  border:1px solid rgba(143,231,255,.26);
+  background:rgba(143,231,255,.08);
+  color:var(--blue);
+  border-radius:999px;
+  padding:10px 14px;
+  font-size:13px;
+  font-weight:700;
+}
+.market-card{
+  padding:24px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+.big-number{
+  font-size:42px;
+  font-weight:900;
+  color:var(--blue);
+  text-shadow:0 0 16px rgba(143,231,255,.3);
+}
+.market-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:18px;
+}
+.mini{
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:16px;
+  padding:12px;
+  background:rgba(255,255,255,.035);
+}
+.mini span{display:block;color:var(--muted);font-size:12px}
+.mini b{display:block;margin-top:5px;font-size:15px}
+.main-grid{
+  display:grid;
+  grid-template-columns:420px 1fr;
+  gap:22px;
+}
+.panel{
+  padding:22px;
+}
+.panel-title{
+  margin:0 0 16px;
+  font-size:19px;
+  letter-spacing:.4px;
+}
+label{
+  display:block;
+  margin:14px 0 8px;
+  color:var(--blue);
+  font-size:13px;
+  font-weight:700;
+  letter-spacing:.3px;
+}
+.input-wrap{
+  position:relative;
+}
+input,select{
+  width:100%;
+  height:54px;
+  padding:0 50px 0 14px;
+  background:#0b1015;
+  border:1px solid rgba(143,231,255,.28);
+  border-radius:14px;
+  color:white;
+  font-size:16px;
+}
+select{padding-right:14px}
+input:focus,select:focus{
+  outline:none;
+  border-color:var(--blue);
+  box-shadow:0 0 15px rgba(143,231,255,.32);
+}
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button{
+  -webkit-appearance:none;
+  margin:0;
+}
+input[type=number]{
+  -moz-appearance:textfield;
+  appearance:textfield;
+}
+.stepper{
+  position:absolute;
+  right:8px;
+  top:50%;
+  transform:translateY(-50%);
+  width:30px;
+  height:42px;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+.stepper button{
+  height:19px;
+  width:30px;
+  border:1px solid rgba(143,231,255,.55);
+  border-radius:8px;
+  background:linear-gradient(180deg,#1a2930,#071014);
+  color:var(--blue);
+  font-size:10px;
+  cursor:pointer;
+  box-shadow:0 0 8px rgba(143,231,255,.15);
+}
+.stepper button:hover{box-shadow:0 0 14px rgba(143,231,255,.34)}
+.row2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+.tax-section{
+  margin-top:18px;
+  padding:14px;
+  border:1px solid rgba(143,231,255,.18);
+  border-radius:18px;
+  background:rgba(11,16,21,.78);
+}
+.tax-title{
+  margin:0 0 12px;
+  color:var(--blue);
+  font-size:13px;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  font-weight:800;
+}
+.state-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
+.state-option input{display:none}
+.state-card{
+  min-height:92px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  border:1px solid rgba(143,231,255,.22);
+  border-radius:16px;
+  background:linear-gradient(180deg,#111922,#0a1016);
+  cursor:pointer;
+  transition:.18s ease;
+}
+.state-option input:checked + .state-card{
+  border-color:var(--blue);
+  box-shadow:0 0 18px rgba(143,231,255,.35);
+  transform:translateY(-1px);
+}
+.state-name{font-size:12px;font-weight:800}
+.state-rate{font-size:11px;color:rgba(255,255,255,.68);text-align:center}
+.flag{
+  width:50px;height:31px;border-radius:6px;overflow:hidden;
+  border:1px solid rgba(255,255,255,.28);
+  box-shadow:0 0 10px rgba(0,0,0,.28);
+  position:relative;
+}
+.flag-hi{background:repeating-linear-gradient(to bottom,#fff 0 3.875px,#d71920 3.875px 7.75px,#fff 7.75px 11.625px,#0033a0 11.625px 15.5px)}
+.flag-hi::before{content:"";position:absolute;left:0;top:0;width:23px;height:17px;background:linear-gradient(90deg,transparent 0 8px,#fff 8px 11px,transparent 11px),linear-gradient(0deg,transparent 0 6px,#fff 6px 9px,transparent 9px),#00247d}
+.flag-hi::after{content:"";position:absolute;left:0;top:0;width:23px;height:17px;background:linear-gradient(32deg,transparent 0 42%,#cf142b 43% 56%,transparent 57%),linear-gradient(-32deg,transparent 0 42%,#cf142b 43% 56%,transparent 57%);opacity:.9}
+.flag-fl{background:linear-gradient(32deg,transparent 0 45%,#d71920 46% 54%,transparent 55%),linear-gradient(-32deg,transparent 0 45%,#d71920 46% 54%,transparent 55%),#fff}
+.flag-fl::after{content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:11px;height:11px;border-radius:50%;background:#d9b45f;border:1px solid #1f7a3f}
+.flag-tx{background:linear-gradient(to right,#002868 0 34%,transparent 34%),linear-gradient(to bottom,#fff 0 50%,#bf0d3e 50%)}
+.flag-tx::after{content:"★";position:absolute;left:7px;top:6px;font-size:14px;color:white}
+.calculate{
+  width:100%;
+  height:58px;
+  margin-top:18px;
+  border:none;
+  border-radius:16px;
+  font-weight:900;
+  letter-spacing:2px;
+  background:linear-gradient(90deg,#fff,#9eeaff);
+  cursor:pointer;
+  color:#071014;
+  box-shadow:0 0 20px rgba(143,231,255,.22);
+}
+.calculate:hover{filter:brightness(1.06)}
+.output-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+}
+.metric{
+  min-height:116px;
+  padding:17px;
+  border-radius:22px;
+  border:1px solid rgba(255,255,255,.08);
+  background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.025));
+}
+.metric span{
+  color:var(--muted);
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  font-weight:800;
+}
+.metric b{
+  display:block;
+  margin-top:13px;
+  font-size:clamp(22px,3vw,34px);
+  line-height:1;
+}
+.metric small{
+  display:block;
+  margin-top:10px;
+  color:var(--muted);
+}
+.positive{color:var(--green)!important}
+.negative{color:var(--red)!important}
+.blue{color:var(--blue)!important}
+.dashboard{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+  margin-top:14px;
+}
+.cardlet{
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:22px;
+  background:rgba(255,255,255,.035);
+  padding:16px;
+}
+.result-row{
+  display:flex;
+  justify-content:space-between;
+  gap:14px;
+  border-bottom:1px solid rgba(255,255,255,.06);
+  padding:12px 0;
+  color:var(--muted);
+}
+.result-row:first-child{padding-top:0}
+.result-row:last-child{border-bottom:0;padding-bottom:0}
+.result-row b{color:white}
+.barbox{
+  margin-top:14px;
+}
+.bar-label{
+  display:flex;
+  justify-content:space-between;
+  font-size:12px;
+  color:var(--muted);
+  margin-bottom:7px;
+}
+.bar{
+  height:12px;
+  border-radius:99px;
+  background:rgba(255,255,255,.08);
+  overflow:hidden;
+}
+.bar-fill{
+  height:100%;
+  width:0%;
+  border-radius:99px;
+  background:linear-gradient(90deg,var(--blue2),var(--green));
+  transition:.35s;
+}
+.notice{
+  margin-top:14px;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.45;
+}
+
+/* Standalone futuristic calculator added without changing existing layout */
+.calculator-panel{
+  margin-top:22px;
+  padding:22px;
+}
+.calc-shell{
+  display:grid;
+  grid-template-columns:1fr 320px;
+  gap:18px;
+  align-items:stretch;
+}
+.calc-display-card{
+  min-height:210px;
+  border:1px solid rgba(143,231,255,.16);
+  border-radius:24px;
+  padding:20px;
+  background:
+    radial-gradient(circle at 12% 20%, rgba(143,231,255,.12), transparent 34%),
+    linear-gradient(180deg,rgba(255,255,255,.052),rgba(255,255,255,.022));
+}
+.calc-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 12px;
+  border:1px solid rgba(143,231,255,.26);
+  border-radius:999px;
+  color:var(--blue);
+  background:rgba(143,231,255,.07);
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:1px;
+  text-transform:uppercase;
+}
+.calc-expression{
+  margin-top:22px;
+  min-height:34px;
+  color:var(--muted);
+  font-size:20px;
+  overflow-wrap:anywhere;
+}
+.calc-result{
+  margin-top:12px;
+  color:var(--blue);
+  font-size:clamp(34px,6vw,58px);
+  font-weight:900;
+  line-height:1;
+  text-shadow:0 0 18px rgba(143,231,255,.34);
+  overflow-wrap:anywhere;
+}
+.calc-keypad{
+  border:1px solid rgba(143,231,255,.16);
+  border-radius:24px;
+  padding:14px;
+  background:rgba(8,13,18,.72);
+  box-shadow:inset 0 0 22px rgba(143,231,255,.04);
+}
+.calc-buttons{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+}
+.calc-btn{
+  height:52px;
+  border:1px solid rgba(143,231,255,.24);
+  border-radius:14px;
+  background:linear-gradient(180deg,#16202a,#0a1016);
+  color:white;
+  font-size:18px;
+  font-weight:800;
+  cursor:pointer;
+  box-shadow:0 0 10px rgba(0,0,0,.18);
+  transition:.16s ease;
+}
+.calc-btn:hover{
+  border-color:var(--blue);
+  color:var(--blue);
+  box-shadow:0 0 16px rgba(143,231,255,.22);
+  transform:translateY(-1px);
+}
+.calc-btn:active{transform:scale(.97)}
+.calc-op{
+  color:var(--blue);
+  background:linear-gradient(180deg,#1a2930,#071014);
+}
+.calc-clear{
+  color:var(--red);
+}
+.calc-equals{
+  grid-column:span 2;
+  color:#061015;
+  background:linear-gradient(90deg,#ffffff,#9eeaff);
+  border:none;
+}
+.calc-zero{
+  grid-column:span 2;
+}
+.calc-hint{
+  margin-top:12px;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.45;
+}
+
+/* Running stock header added inside the bottom space of the first hero card */
+.hero-stock-ticker{
+  margin-top:42px;
+  border:1px solid rgba(143,231,255,.22);
+  border-radius:18px;
+  background:rgba(143,231,255,.055);
+  overflow:hidden;
+  position:relative;
+}
+.hero-stock-ticker::before,
+.hero-stock-ticker::after{
+  content:"";
+  position:absolute;
+  top:0;
+  width:70px;
+  height:100%;
+  z-index:2;
+  pointer-events:none;
+}
+.hero-stock-ticker::before{
+  left:0;
+  background:linear-gradient(90deg,rgba(12,17,23,.96),transparent);
+}
+.hero-stock-ticker::after{
+  right:0;
+  background:linear-gradient(270deg,rgba(12,17,23,.96),transparent);
+}
+.hero-stock-track{
+  display:flex;
+  width:max-content;
+  gap:24px;
+  padding:14px 0;
+  animation:heroTickerScroll 28s linear infinite;
+}
+.hero-stock-ticker:hover .hero-stock-track{
+  animation-play-state:paused;
+}
+.hero-stock-item{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  padding-left:24px;
+  white-space:nowrap;
+  font-size:14px;
+  font-weight:800;
+}
+.hero-stock-symbol{
+  color:white;
+  letter-spacing:.8px;
+}
+.hero-stock-price{
+  color:var(--blue);
+}
+.hero-stock-up{
+  color:var(--green);
+}
+.hero-stock-down{
+  color:var(--red);
+}
+@keyframes heroTickerScroll{
+  from{transform:translateX(0)}
+  to{transform:translateX(-50%)}
+}
+
+
+/* Discount calculator added for purchases like food/drinks */
+.discount-panel{
+  margin-top:22px;
+  padding:22px;
+}
+.discount-shell{
+  display:grid;
+  grid-template-columns:420px 1fr;
+  gap:18px;
+  align-items:stretch;
+}
+.discount-summary{
+  min-height:230px;
+  border:1px solid rgba(143,231,255,.16);
+  border-radius:24px;
+  padding:20px;
+  background:
+    radial-gradient(circle at 12% 20%, rgba(143,231,255,.12), transparent 34%),
+    linear-gradient(180deg,rgba(255,255,255,.052),rgba(255,255,255,.022));
+}
+.discount-main{
+  margin-top:16px;
+  color:var(--blue);
+  font-size:clamp(34px,6vw,58px);
+  font-weight:900;
+  line-height:1;
+  text-shadow:0 0 18px rgba(143,231,255,.34);
+}
+.discount-sub{
+  margin-top:10px;
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.45;
+}
+.discount-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+  margin-top:16px;
+}
+.discount-tile{
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:18px;
+  padding:14px;
+  background:rgba(255,255,255,.035);
+}
+.discount-tile span{
+  display:block;
+  color:var(--muted);
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  font-weight:800;
+}
+.discount-tile b{
+  display:block;
+  margin-top:8px;
+  color:white;
+  font-size:22px;
+}
+
+/* Deposit interest calculator */
+.interest-panel{margin-top:22px;padding:22px;}
+.interest-shell{display:grid;grid-template-columns:420px 1fr;gap:18px;align-items:stretch;}
+.interest-summary{
+  min-height:250px;
+  border:1px solid rgba(143,231,255,.16);
+  border-radius:24px;
+  padding:20px;
+  background:
+    radial-gradient(circle at 12% 20%, rgba(143,231,255,.12), transparent 34%),
+    linear-gradient(180deg,rgba(255,255,255,.052),rgba(255,255,255,.022));
+}
+.interest-main{
+  margin-top:16px;
+  color:var(--blue);
+  font-size:clamp(34px,6vw,58px);
+  font-weight:900;
+  line-height:1;
+  text-shadow:0 0 18px rgba(143,231,255,.34);
+}
+.interest-sub{margin-top:10px;color:var(--muted);font-size:14px;line-height:1.45;}
+.interest-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px;}
+.interest-tile{
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:18px;
+  padding:14px;
+  background:rgba(255,255,255,.035);
+}
+.interest-tile span{
+  display:block;
+  color:var(--muted);
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  font-weight:800;
+}
+.interest-tile b{display:block;margin-top:8px;color:white;font-size:22px;}
+
+.top-calculator-nav{
+  width:min(1220px,94vw);
+  margin:20px auto 0;
+  position:sticky;
+  top:12px;
+  z-index:50;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  padding:12px;
+  border:1px solid rgba(143,231,255,.22);
+  border-radius:20px;
+  background:rgba(12,17,23,.86);
+  backdrop-filter:blur(16px);
+  box-shadow:0 14px 40px rgba(0,0,0,.28);
+}
+.top-calculator-nav a{
+  text-decoration:none;
+  color:var(--blue);
+  border:1px solid rgba(143,231,255,.24);
+  background:rgba(143,231,255,.07);
+  border-radius:999px;
+  padding:10px 14px;
+  font-size:13px;
+  font-weight:800;
+}
+.top-calculator-nav a:hover{
+  color:#061015;
+  background:linear-gradient(90deg,#fff,#9eeaff);
+  border-color:transparent;
+}
+.property-tax-panel{margin-top:22px;padding:22px;}
+.property-tax-shell{display:grid;grid-template-columns:420px 1fr;gap:18px;align-items:stretch;}
+.property-tax-summary{
+  min-height:270px;
+  border:1px solid rgba(143,231,255,.16);
+  border-radius:24px;
+  padding:20px;
+  background:
+    radial-gradient(circle at 12% 20%, rgba(143,231,255,.12), transparent 34%),
+    linear-gradient(180deg,rgba(255,255,255,.052),rgba(255,255,255,.022));
+}
+.property-tax-main{
+  margin-top:16px;
+  color:var(--blue);
+  font-size:clamp(34px,6vw,58px);
+  font-weight:900;
+  line-height:1;
+  text-shadow:0 0 18px rgba(143,231,255,.34);
+}
+.property-tax-sub{margin-top:10px;color:var(--muted);font-size:14px;line-height:1.45;}
+.property-tax-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px;}
+.property-tax-tile{
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:18px;
+  padding:14px;
+  background:rgba(255,255,255,.035);
+}
+.property-tax-tile span{
+  display:block;
+  color:var(--muted);
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  font-weight:800;
+}
+.property-tax-tile b{display:block;margin-top:8px;color:white;font-size:22px;}
+.state-priority-note{
+  margin-top:12px;
+  padding:10px 12px;
+  border-left:3px solid var(--blue);
+  background:rgba(143,231,255,.055);
+  border-radius:10px;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.45;
+}
+
+/* Same profit investment calculator */
+.same-profit-panel{margin-top:22px;padding:22px;}
+.same-profit-shell{display:grid;grid-template-columns:420px 1fr;gap:18px;align-items:stretch;}
+.same-profit-summary{min-height:280px;border:1px solid rgba(143,231,255,.16);border-radius:24px;padding:20px;background:radial-gradient(circle at 12% 20%, rgba(143,231,255,.12), transparent 34%),linear-gradient(180deg,rgba(255,255,255,.052),rgba(255,255,255,.022));}
+.same-profit-main{margin-top:16px;color:var(--blue);font-size:clamp(34px,6vw,58px);font-weight:900;line-height:1;text-shadow:0 0 18px rgba(143,231,255,.34);}
+.same-profit-sub{margin-top:10px;color:var(--muted);font-size:14px;line-height:1.45;}
+.same-profit-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:16px;}
+.same-profit-tile{border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:14px;background:rgba(255,255,255,.035);}
+.same-profit-tile span{display:block;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:1px;font-weight:800;}
+.same-profit-tile b{display:block;margin-top:8px;color:white;font-size:22px;}
+.same-profit-note{margin-top:12px;padding:10px 12px;border-left:3px solid var(--blue);background:rgba(143,231,255,.055);border-radius:10px;color:var(--muted);font-size:12px;line-height:1.45;}
+
+.same-profit-formula{
+  margin-top:14px;
+  padding:14px;
+  border:1px solid rgba(143,231,255,.16);
+  border-radius:16px;
+  background:rgba(143,231,255,.045);
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.55;
+}
+.same-profit-highlight{
+  margin-top:16px;
+  padding:16px;
+  border-radius:20px;
+  border:1px solid rgba(109,255,176,.22);
+  background:
+    radial-gradient(circle at 15% 20%, rgba(109,255,176,.10), transparent 34%),
+    linear-gradient(180deg,rgba(109,255,176,.05),rgba(143,231,255,.025));
+}
+.same-profit-highlight span{
+  display:block;
+  color:var(--muted);
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  font-weight:800;
+}
+.same-profit-highlight b{
+  display:block;
+  margin-top:8px;
+  color:var(--green);
+  font-size:clamp(28px,4vw,44px);
+  line-height:1;
+  text-shadow:0 0 16px rgba(109,255,176,.26);
+}
+
+
+
+@media(max-width:940px){.same-profit-shell{grid-template-columns:1fr}}
+@media(max-width:620px){.same-profit-grid{grid-template-columns:1fr}}
+
+@media(max-width:940px){.property-tax-shell{grid-template-columns:1fr}}
+@media(max-width:620px){.property-tax-grid{grid-template-columns:1fr}}
+
+@media(max-width:940px){.interest-shell{grid-template-columns:1fr}}
+@media(max-width:620px){.interest-grid{grid-template-columns:1fr}}
+
+@media(max-width:940px){
+  .discount-shell{grid-template-columns:1fr}
+}
+@media(max-width:520px){
+  .discount-grid{grid-template-columns:1fr}
+}
+
+@media(max-width:940px){
+  .calc-shell{grid-template-columns:1fr}
+}
+
+@media(max-width:940px){
+  .hero,.main-grid{grid-template-columns:1fr}
+  .output-grid,.dashboard{grid-template-columns:1fr}
+}
+@media(max-width:520px){
+  .state-grid,.row2{grid-template-columns:1fr}
+  .panel{padding:18px}
+}
+
+/* Corrected average-cost recovery calculator */
+.recovery-panel{margin-top:22px;padding:22px}
+.recovery-shell{display:grid;grid-template-columns:420px 1fr;gap:18px;align-items:stretch}
+.recovery-summary{border:1px solid rgba(143,231,255,.16);border-radius:24px;padding:20px;background:radial-gradient(circle at 12% 20%,rgba(143,231,255,.12),transparent 34%),linear-gradient(180deg,rgba(255,255,255,.052),rgba(255,255,255,.022))}
+.recovery-main{margin-top:16px;color:var(--blue);font-size:clamp(34px,6vw,58px);font-weight:900;line-height:1;text-shadow:0 0 18px rgba(143,231,255,.34)}
+.recovery-sub{margin-top:10px;color:var(--muted);font-size:14px;line-height:1.45}
+.recovery-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:16px}
+.recovery-tile{border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:14px;background:rgba(255,255,255,.035)}
+.recovery-tile span{display:block;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:1px;font-weight:800}
+.recovery-tile b{display:block;margin-top:8px;color:white;font-size:22px}
+.recovery-table-wrap{margin-top:18px;overflow:auto;border:1px solid rgba(143,231,255,.14);border-radius:18px;background:rgba(8,13,18,.42)}
+.recovery-table{width:100%;border-collapse:collapse;min-width:560px}
+.recovery-table th,.recovery-table td{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.06);text-align:right;white-space:nowrap}
+.recovery-table th:first-child,.recovery-table td:first-child{text-align:left}
+.recovery-table th{color:var(--blue);font-size:12px;text-transform:uppercase;letter-spacing:1px}
+.recovery-table td{color:var(--muted);font-size:14px}
+.recovery-positive{color:var(--green)!important;font-weight:900}
+.recovery-negative{color:var(--red)!important;font-weight:900}
+.recovery-note{margin-top:14px;padding:12px 14px;border-left:3px solid var(--blue);background:rgba(143,231,255,.055);border-radius:12px;color:var(--muted);font-size:12px;line-height:1.5}
+@media(max-width:940px){.recovery-shell{grid-template-columns:1fr}}
+@media(max-width:620px){.recovery-grid{grid-template-columns:1fr}}
+
+</style>
+</head>
+<body>
+
+<nav class="top-calculator-nav">
+  <a href="#stock-profit-studio">Stock Profit Studio</a>
+  <a href="#quick-calculator">Quick Calculator</a>
+  <a href="#discount-calculator">Discount Calculator</a>
+  <a href="#interest-calculator">Deposit Interest</a>
+  <a href="#property-tax-calculator">Property Tax Calculator</a>
+  <a href="#same-profit-calculator">Same Profit Calculator</a>
+  
+  <a href="#recovery-calculator">Recovery Calculator</a>
+</nav>
+<div class="app">
+  <section class="hero" id="stock-profit-studio">
+    <div class="hero-card">
+      <div class="kicker">Advanced UX/UI stock calculator</div>
+      <h1>Stock Profit Studio</h1>
+      <p class="sub">
+        Calculate stock profit, return, total balance, federal tax estimate,
+        and Hawaii / Florida / Texas state tax comparison.
+      </p>
+      <div class="hero-actions">
+        <div class="pill">Limit-order mindset</div>
+        <div class="pill">Federal + state tax estimate</div>
+        <div class="pill">Charcoal premium UI</div>
+      </div>
+      <div class="hero-stock-ticker">
+        <div class="hero-stock-track">
+          <div class="hero-stock-item"><span class="hero-stock-symbol">SPX</span><span class="hero-stock-price">7,508.37</span><span class="hero-stock-up">▲ 0.47%</span></div>
+          <div class="hero-stock-item"><span class="hero-stock-symbol">VOO</span><span class="hero-stock-price">$693.78</span><span class="hero-stock-up">▲ 0.42%</span></div>
+          <div class="hero-stock-item"><span class="hero-stock-symbol">NVDA</span><span class="hero-stock-price">$217.00</span><span class="hero-stock-up">▲ 1.28%</span></div>
+          <div class="hero-stock-item"><span class="hero-stock-symbol">AAPL</span><span class="hero-stock-price">$202.11</span><span class="hero-stock-down">▼ 0.18%</span></div>
+          <div class="hero-stock-item"><span class="hero-stock-symbol">MSFT</span><span class="hero-stock-price">$476.62</span><span class="hero-stock-up">▲ 0.66%</span></div>
+          <div class="hero-stock-item"><span class="hero-stock-symbol">AMZN</span><span class="hero-stock-price">$185.21</span><span class="hero-stock-up">▲ 0.92%</span></div>
+          <div class="hero-stock-item"><span class="hero-stock-symbol">GOOGL</span><span class="hero-stock-price">$176.44</span><span class="hero-stock-up">▲ 0.31%</span></div>
+          <div class="hero-stock-item"><span class="hero-stock-symbol">META</span><span class="hero-stock-price">$642.80</span><span class="hero-stock-up">▲ 1.14%</span></div>
+          <div class="hero-stock-item"><span class="hero-stock-symbol">AMD</span><span class="hero-stock-price">$139.40</span><span class="hero-stock-up">▲ 1.76%</span></div>
+          <div class="hero-stock-item"><span class="hero-stock-symbol">TSLA</span><span class="hero-stock-price">$184.12</span><span class="hero-stock-down">▼ 1.21%</span></div>
+
+          <div class="hero-stock-item"><span class="hero-stock-symbol">SPX</span><span class="hero-stock-price">7,508.37</span><span class="hero-stock-up">▲ 0.47%</span></div>
+          <div class="hero-stock-item"><span class="hero-stock-symbol">VOO</span><span class="hero-stock-price">$693.78</span><span class="hero-stock-up">▲ 0.42%</span></div>
+          <div class="hero-stock-item"><span class="hero-stock-symbol">NVDA</span><span class="hero-stock-price">$217.00</span><span class="hero-stock-up">▲ 1.28%</span></div>
+          <div class="hero-stock-item"><span class="hero-stock-symbol">AAPL</span><span class="hero-stock-price">$202.11</span><span class="hero-stock-down">▼ 0.18%</span></div>
+          <div class="hero-stock-item"><span class="hero-stock-symbol">MSFT</span><span class="hero-stock-price">$476.62</span><span class="hero-stock-up">▲ 0.66%</span></div>
+          <div class="hero-stock-item"><span class="hero-stock-symbol">AMZN</span><span class="hero-stock-price">$185.21</span><span class="hero-stock-up">▲ 0.92%</span></div>
+          <div class="hero-stock-item"><span class="hero-stock-symbol">GOOGL</span><span class="hero-stock-price">$176.44</span><span class="hero-stock-up">▲ 0.31%</span></div>
+          <div class="hero-stock-item"><span class="hero-stock-symbol">META</span><span class="hero-stock-price">$642.80</span><span class="hero-stock-up">▲ 1.14%</span></div>
+          <div class="hero-stock-item"><span class="hero-stock-symbol">AMD</span><span class="hero-stock-price">$139.40</span><span class="hero-stock-up">▲ 1.76%</span></div>
+          <div class="hero-stock-item"><span class="hero-stock-symbol">TSLA</span><span class="hero-stock-price">$184.12</span><span class="hero-stock-down">▼ 1.21%</span></div>
+        </div>
+      </div>
+
+    </div>
+    <div class="hero-card market-card">
+      <div>
+        <div class="kicker">Current model</div>
+        <div class="big-number" id="heroProfit">$0</div>
+        <p class="sub" id="heroText">Enter numbers and calculate to see your estimated profit after tax.</p>
+      </div>
+      <div class="market-grid">
+        <div class="mini"><span>Tax mode</span><b id="miniTaxMode">Short-term</b></div>
+        <div class="mini"><span>State</span><b id="miniState">Hawaii</b></div>
+        <div class="mini"><span>Order idea</span><b>Use Limit</b></div>
+        <div class="mini"><span>Profit focus</span><b>After Tax</b></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="main-grid">
+    <div class="panel">
+      <h2 class="panel-title">Trade Inputs</h2>
+
+      <label>Investment Amount (USD)</label>
+      <div class="input-wrap">
+        <input id="investment" type="number" value="98000" placeholder="98000" step="1000" />
+        <div class="stepper">
+          <button type="button" onclick="stepInput('investment',1)">▲</button>
+          <button type="button" onclick="stepInput('investment',-1)">▼</button>
+        </div>
+      </div>
+
+      <div class="row2">
+        <div>
+          <label>Buy Price Per Share</label>
+          <div class="input-wrap">
+            <input id="buy" type="number" value="217" placeholder="217" step="1" />
+            <div class="stepper">
+              <button type="button" onclick="stepInput('buy',1)">▲</button>
+              <button type="button" onclick="stepInput('buy',-1)">▼</button>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label>Sell Price Per Share</label>
+          <div class="input-wrap">
+            <input id="sell" type="number" value="232" placeholder="232" step="1" />
+            <div class="stepper">
+              <button type="button" onclick="stepInput('sell',1)">▲</button>
+              <button type="button" onclick="stepInput('sell',-1)">▼</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row2">
+        <div>
+          <label>Federal Tax Rate (%)</label>
+          <div class="input-wrap">
+            <input id="federalRate" type="number" value="12" placeholder="12" step="1" />
+            <div class="stepper">
+              <button type="button" onclick="stepInput('federalRate',1)">▲</button>
+              <button type="button" onclick="stepInput('federalRate',-1)">▼</button>
+            </div>
+          </div>
+        </div>
+        <div>
+          <label>Holding Period</label>
+          <select id="holdingPeriod">
+            <option value="short" selected>Short-term: less than 1 year</option>
+            <option value="long">Long-term: 1 year or more</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="tax-section">
+        <p class="tax-title">Choose state for tax estimate</p>
+        <div class="state-grid">
+          <label class="state-option">
+            <input type="radio" name="stateTax" value="HI" checked />
+            <div class="state-card">
+              <!-- <div class="flag flag-hi"></div> -->
+              <div class="state-name">Hawaii</div>
+              <div class="state-rate">11% max estimate</div>
+            </div>
+          </label>
+          <label class="state-option">
+            <input type="radio" name="stateTax" value="FL" />
+            <div class="state-card">
+              <!-- <div class="flag flag-fl"></div> -->
+              <div class="state-name">Florida</div>
+              <div class="state-rate">0% state income tax</div>
+            </div>
+          </label>
+          <label class="state-option">
+            <input type="radio" name="stateTax" value="TX" />
+            <div class="state-card">
+              <!-- <div class="flag flag-tx"></div> -->
+              <div class="state-name">Texas</div>
+              <div class="state-rate">0% state income tax</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <button class="calculate" onclick="calc()">CALCULATE PROFIT</button>
+    </div>
+
+    <div>
+      <div class="panel">
+        <h2 class="panel-title">Results Dashboard</h2>
+
+        <div class="output-grid">
+          <div class="metric">
+            <span>Profit / Loss</span>
+            <b id="profit" class="blue">$0</b>
+            <small>Before taxes</small>
+          </div>
+          <div class="metric">
+            <span>Total Balance After Profit</span>
+            <b id="totalBalance" class="blue">$0</b>
+            <small>Estimated sale value</small>
+          </div>
+          <div class="metric">
+            <span>Return</span>
+            <b id="returnPct" class="blue">0%</b>
+            <small>Based on investment amount</small>
+          </div>
+        </div>
+
+        <div class="dashboard">
+          <div class="cardlet">
+            <h3 class="panel-title">Tax Estimate</h3>
+            <div class="result-row"><span>Federal tax on profit</span><b id="federalTax">$0</b></div>
+            <div class="result-row"><span>State tax on profit</span><b id="stateTax">$0</b></div>
+            <div class="result-row"><span>Total tax to pay</span><b id="totalTax">$0</b></div>
+            <div class="result-row"><span>Profit after tax</span><b id="afterTax">$0</b></div>
+            <div class="notice">This is an estimate. Actual taxes depend on your total income, deductions, filing status, and whether the gain is short-term or long-term.</div>
+          </div>
+
+          <div class="cardlet">
+            <h3 class="panel-title">Trade Breakdown</h3>
+            <div class="result-row"><span>Shares bought</span><b id="shares">0</b></div>
+            <div class="result-row"><span>Gain per share</span><b id="gainPerShare">$0</b></div>
+            <div class="result-row"><span>Break-even sell price after tax</span><b id="breakEven">$0</b></div>
+            <div class="result-row"><span>Final profit after tax</span><b id="finalProfit">$0</b></div>
+          </div>
+        </div>
+
+        <div class="barbox">
+          <div class="bar-label"><span>Tax drag on profit</span><span id="taxDragLabel">0%</span></div>
+          <div class="bar"><div class="bar-fill" id="taxDragBar"></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="panel calculator-panel" id="quick-calculator">
+    <h2 class="panel-title">Quick Calculator</h2>
+    <div class="calc-shell">
+      <div class="calc-display-card">
+        <div class="calc-badge">Built-in finance calculator</div>
+        <div class="calc-expression" id="quickCalcExpression">0</div>
+        <div class="calc-result" id="quickCalcResult">$0</div>
+        <div class="calc-hint">
+          Use this for quick checks like profit, taxes, share counts, or price differences while keeping the stock calculator above unchanged.
+        </div>
+      </div>
+
+      <div class="calc-keypad">
+        <div class="calc-buttons">
+          <button class="calc-btn calc-clear" type="button" onclick="quickCalcClear()">C</button>
+          <button class="calc-btn calc-op" type="button" onclick="quickCalcBack()">⌫</button>
+          <button class="calc-btn calc-op" type="button" onclick="quickCalcInput('%')">%</button>
+          <button class="calc-btn calc-op" type="button" onclick="quickCalcInput('/')">÷</button>
+
+          <button class="calc-btn" type="button" onclick="quickCalcInput('7')">7</button>
+          <button class="calc-btn" type="button" onclick="quickCalcInput('8')">8</button>
+          <button class="calc-btn" type="button" onclick="quickCalcInput('9')">9</button>
+          <button class="calc-btn calc-op" type="button" onclick="quickCalcInput('*')">×</button>
+
+          <button class="calc-btn" type="button" onclick="quickCalcInput('4')">4</button>
+          <button class="calc-btn" type="button" onclick="quickCalcInput('5')">5</button>
+          <button class="calc-btn" type="button" onclick="quickCalcInput('6')">6</button>
+          <button class="calc-btn calc-op" type="button" onclick="quickCalcInput('-')">−</button>
+
+          <button class="calc-btn" type="button" onclick="quickCalcInput('1')">1</button>
+          <button class="calc-btn" type="button" onclick="quickCalcInput('2')">2</button>
+          <button class="calc-btn" type="button" onclick="quickCalcInput('3')">3</button>
+          <button class="calc-btn calc-op" type="button" onclick="quickCalcInput('+')">+</button>
+
+          <button class="calc-btn calc-zero" type="button" onclick="quickCalcInput('0')">0</button>
+          <button class="calc-btn" type="button" onclick="quickCalcInput('.')">.</button>
+          <button class="calc-btn calc-equals" type="button" onclick="quickCalcEquals()">=</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="panel discount-panel" id="discount-calculator">
+    <h2 class="panel-title">Discount Calculator</h2>
+    <div class="discount-shell">
+      <div>
+        <label>Original Price (USD)</label>
+        <div class="input-wrap">
+          <input id="discountOriginal" type="number" value="25" placeholder="25" step="1" />
+          <div class="stepper">
+            <button type="button" onclick="stepInput('discountOriginal',1)">▲</button>
+            <button type="button" onclick="stepInput('discountOriginal',-1)">▼</button>
+          </div>
+        </div>
+
+        <label>Discount (%)</label>
+        <div class="input-wrap">
+          <input id="discountPercent" type="number" value="20" placeholder="20" step="1" />
+          <div class="stepper">
+            <button type="button" onclick="stepInput('discountPercent',1)">▲</button>
+            <button type="button" onclick="stepInput('discountPercent',-1)">▼</button>
+          </div>
+        </div>
+
+        <button class="calculate" type="button" onclick="calcDiscount()">CALCULATE DISCOUNT</button>
+        <div class="notice">Example: if food or a drink costs $25 and has a 20% discount, this shows your savings and final total.</div>
+      </div>
+
+      <div class="discount-summary">
+        <div class="calc-badge">Purchase discount result</div>
+        <div class="discount-main" id="discountFinal">$0</div>
+        <div class="discount-sub">Final price after discount</div>
+
+        <div class="discount-grid">
+          <div class="discount-tile">
+            <span>You Save</span>
+            <b id="discountSavings">$0</b>
+          </div>
+          <div class="discount-tile">
+            <span>Discount</span>
+            <b id="discountRate">0%</b>
+          </div>
+          <div class="discount-tile">
+            <span>Original Price</span>
+            <b id="discountOriginalOut">$0</b>
+          </div>
+          <div class="discount-tile">
+            <span>Total to Pay</span>
+            <b id="discountTotalOut">$0</b>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="panel interest-panel" id="interest-calculator">
+    <h2 class="panel-title">Deposit Interest Calculator</h2>
+    <div class="interest-shell">
+      <div>
+        <label>Deposit Amount (USD)</label>
+        <div class="input-wrap">
+          <input id="interestDeposit" type="number" value="10000" placeholder="10000" step="100" />
+          <div class="stepper">
+            <button type="button" onclick="stepInput('interestDeposit',1)">▲</button>
+            <button type="button" onclick="stepInput('interestDeposit',-1)">▼</button>
+          </div>
+        </div>
+
+        <label>Annual Interest Rate / APY (%)</label>
+        <div class="input-wrap">
+          <input id="interestRate" type="number" value="4.5" placeholder="4.5" step="0.1" />
+          <div class="stepper">
+            <button type="button" onclick="stepInput('interestRate',1)">▲</button>
+            <button type="button" onclick="stepInput('interestRate',-1)">▼</button>
+          </div>
+        </div>
+
+        <button class="calculate" type="button" onclick="calcInterest()">CALCULATE INTEREST</button>
+        <div class="notice">This is an estimate using the annual rate divided across the year. Actual bank interest can vary based on compounding frequency and account rules.</div>
+      </div>
+
+      <div class="interest-summary">
+        <div class="calc-badge">Estimated interest earnings</div>
+        <div class="interest-main" id="interestYearly">$0</div>
+        <div class="interest-sub">Estimated interest earned in one year</div>
+
+        <div class="interest-grid">
+          <div class="interest-tile"><span>Daily Interest</span><b id="interestDaily">$0</b></div>
+          <div class="interest-tile"><span>Monthly Interest</span><b id="interestMonthly">$0</b></div>
+          <div class="interest-tile"><span>Yearly Interest</span><b id="interestYearlyTile">$0</b></div>
+          <div class="interest-tile"><span>Balance After 1 Year</span><b id="interestBalance">$0</b></div>
+          <div class="interest-tile"><span>Deposit Amount</span><b id="interestDepositOut">$0</b></div>
+          <div class="interest-tile"><span>Annual Rate</span><b id="interestRateOut">0%</b></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="panel property-tax-panel" id="property-tax-calculator">
+    <h2 class="panel-title">Property Tax Calculator by State</h2>
+    <div class="property-tax-shell">
+      <div>
+        <label>Home Value (USD)</label>
+        <div class="input-wrap">
+          <input id="propertyHomeValue" type="number" value="500000" placeholder="500000" step="10000" />
+          <div class="stepper">
+            <button type="button" onclick="stepInput('propertyHomeValue',1)">▲</button>
+            <button type="button" onclick="stepInput('propertyHomeValue',-1)">▼</button>
+          </div>
+        </div>
+
+        <label>Select State</label>
+        <select id="propertyState">
+          <option value="Florida">Florida — 0.76%</option>
+<option value="Texas">Texas — 1.49%</option>
+<option value="Hawaii">Hawaii — 0.27%</option>
+<option disabled>──────── Other States ────────</option>
+<option value="Alabama">Alabama — 0.38%</option>
+<option value="Alaska">Alaska — 1.11%</option>
+<option value="Arizona">Arizona — 0.48%</option>
+<option value="Arkansas">Arkansas — 0.55%</option>
+<option value="California">California — 0.70%</option>
+<option value="Colorado">Colorado — 0.48%</option>
+<option value="Connecticut">Connecticut — 1.81%</option>
+<option value="Delaware">Delaware — 0.50%</option>
+<option value="Georgia">Georgia — 0.77%</option>
+<option value="Idaho">Idaho — 0.49%</option>
+<option value="Illinois">Illinois — 2.01%</option>
+<option value="Indiana">Indiana — 0.74%</option>
+<option value="Iowa">Iowa — 1.39%</option>
+<option value="Kansas">Kansas — 1.29%</option>
+<option value="Kentucky">Kentucky — 0.75%</option>
+<option value="Louisiana">Louisiana — 0.55%</option>
+<option value="Maine">Maine — 1.02%</option>
+<option value="Maryland">Maryland — 0.97%</option>
+<option value="Massachusetts">Massachusetts — 1.07%</option>
+<option value="Michigan">Michigan — 1.25%</option>
+<option value="Minnesota">Minnesota — 1.02%</option>
+<option value="Mississippi">Mississippi — 0.72%</option>
+<option value="Missouri">Missouri — 0.85%</option>
+<option value="Montana">Montana — 0.72%</option>
+<option value="Nebraska">Nebraska — 1.49%</option>
+<option value="Nevada">Nevada — 0.47%</option>
+<option value="New Hampshire">New Hampshire — 1.66%</option>
+<option value="New Jersey">New Jersey — 2.11%</option>
+<option value="New Mexico">New Mexico — 0.70%</option>
+<option value="New York">New York — 1.55%</option>
+<option value="North Carolina">North Carolina — 0.66%</option>
+<option value="North Dakota">North Dakota — 0.99%</option>
+<option value="Ohio">Ohio — 1.31%</option>
+<option value="Oklahoma">Oklahoma — 0.80%</option>
+<option value="Oregon">Oregon — 0.81%</option>
+<option value="Pennsylvania">Pennsylvania — 1.30%</option>
+<option value="Rhode Island">Rhode Island — 1.21%</option>
+<option value="South Carolina">South Carolina — 0.48%</option>
+<option value="South Dakota">South Dakota — 1.06%</option>
+<option value="Tennessee">Tennessee — 0.50%</option>
+<option value="Utah">Utah — 0.52%</option>
+<option value="Vermont">Vermont — 1.59%</option>
+<option value="Virginia">Virginia — 0.73%</option>
+<option value="Washington">Washington — 0.81%</option>
+<option value="West Virginia">West Virginia — 0.53%</option>
+<option value="Wisconsin">Wisconsin — 1.42%</option>
+<option value="Wyoming">Wyoming — 0.57%</option>
+        </select>
+
+        <button class="calculate" type="button" onclick="calcPropertyTax()">CALCULATE PROPERTY TAX</button>
+        <div class="state-priority-note">
+          Florida, Texas, and Hawaii are listed first. All other states are separated below them.
+        </div>
+      </div>
+
+      <div class="property-tax-summary">
+        <div class="calc-badge">Estimated property tax</div>
+        <div class="property-tax-main" id="propertyTaxYearly">$0</div>
+        <div class="property-tax-sub">Estimated annual property tax based on the selected state's effective rate.</div>
+
+        <div class="property-tax-grid">
+          <div class="property-tax-tile"><span>Monthly Tax</span><b id="propertyTaxMonthly">$0</b></div>
+          <div class="property-tax-tile"><span>Daily Tax</span><b id="propertyTaxDaily">$0</b></div>
+          <div class="property-tax-tile"><span>Effective Rate</span><b id="propertyTaxRate">0%</b></div>
+          <div class="property-tax-tile"><span>Selected State</span><b id="propertyTaxStateOut">Florida</b></div>
+          <div class="property-tax-tile"><span>Home Value</span><b id="propertyHomeValueOut">$0</b></div>
+          <div class="property-tax-tile"><span>Annual Tax</span><b id="propertyTaxYearlyTile">$0</b></div>
+        </div>
+
+        <div class="notice">
+          This is a statewide effective-rate estimate. Actual property tax depends on county, city, assessed value, exemptions, caps, and local rules.
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="panel same-profit-panel" id="same-profit-calculator">
+    <h2 class="panel-title">Same Profit Investment Calculator</h2>
+    <div class="same-profit-shell">
+      <div>
+        <div class="calc-badge">Step 1: Calculate your target profit</div>
+
+        <label>Original Investment Amount (USD)</label>
+        <div class="input-wrap">
+          <input id="sameOriginalInvestment" type="number" value="96000" placeholder="96000" step="1000" />
+          <div class="stepper"><button type="button" onclick="stepInput('sameOriginalInvestment',1)">▲</button><button type="button" onclick="stepInput('sameOriginalInvestment',-1)">▼</button></div>
+        </div>
+
+        <div class="row2">
+          <div>
+            <label>Original Buy Price</label>
+            <div class="input-wrap">
+              <input id="sameOriginalBuy" type="number" value="212" placeholder="212" step="1" />
+              <div class="stepper"><button type="button" onclick="stepInput('sameOriginalBuy',1)">▲</button><button type="button" onclick="stepInput('sameOriginalBuy',-1)">▼</button></div>
+            </div>
+          </div>
+          <div>
+            <label>Original Sell Price</label>
+            <div class="input-wrap">
+              <input id="sameOriginalSell" type="number" value="213" placeholder="213" step="1" />
+              <div class="stepper"><button type="button" onclick="stepInput('sameOriginalSell',1)">▲</button><button type="button" onclick="stepInput('sameOriginalSell',-1)">▼</button></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="same-profit-highlight">
+          <span>Target profit from original trade</span>
+          <b id="sameTargetProfitBig">$0</b>
+        </div>
+
+        <div class="calc-badge" style="margin-top:18px;">Step 2: Match that profit with another stock</div>
+
+        <div class="row2">
+          <div>
+            <label>New Stock Buy Price</label>
+            <div class="input-wrap">
+              <input id="sameNewBuy" type="number" value="676" placeholder="676" step="1" />
+              <div class="stepper"><button type="button" onclick="stepInput('sameNewBuy',1)">▲</button><button type="button" onclick="stepInput('sameNewBuy',-1)">▼</button></div>
+            </div>
+          </div>
+          <div>
+            <label>New Stock Sell Price</label>
+            <div class="input-wrap">
+              <input id="sameNewSell" type="number" value="677" placeholder="677" step="1" />
+              <div class="stepper"><button type="button" onclick="stepInput('sameNewSell',1)">▲</button><button type="button" onclick="stepInput('sameNewSell',-1)">▼</button></div>
+            </div>
+          </div>
+        </div>
+
+        <button class="calculate" type="button" onclick="calcSameProfit()">CALCULATE NEW INVESTMENT AMOUNT</button>
+
+        <div class="same-profit-formula">
+          Formula: required investment = target profit ÷ new gain per share × new buy price.
+          Example: about $452 profit ÷ $1 move × $676 buy price = about $305k required.
+        </div>
+      </div>
+
+      <div class="same-profit-summary">
+        <div class="calc-badge">New amount needed</div>
+        <div class="same-profit-main" id="sameRequiredInvestment">$0</div>
+        <div class="same-profit-sub">
+          This is the amount you need to invest in the second stock move to make the same dollar profit as the first trade.
+        </div>
+
+        <div class="same-profit-grid">
+          <div class="same-profit-tile"><span>Original Profit</span><b id="sameOriginalProfit">$0</b></div>
+          <div class="same-profit-tile"><span>Original Shares</span><b id="sameOriginalShares">0</b></div>
+          <div class="same-profit-tile"><span>New Gain Per Share</span><b id="sameNewGain">$0</b></div>
+          <div class="same-profit-tile"><span>New Shares Needed</span><b id="sameNewShares">0</b></div>
+          <div class="same-profit-tile"><span>New Trade Return</span><b id="sameNewReturn">0%</b></div>
+          <div class="same-profit-tile"><span>Same Profit Check</span><b id="sameProfitCheck">$0</b></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel recovery-panel" id="recovery-calculator">
+    <h2 class="panel-title">Average Cost & Break-Even Recovery Calculator</h2>
+    <div class="recovery-shell">
+      <div>
+        <div class="calc-badge">Original purchase</div>
+        <label>Original Investment Amount (USD)</label>
+        <div class="input-wrap"><input id="recOriginalInvestment" type="number" value="100000" step="1000" oninput="calcRecovery()"></div>
+
+        <label>Original Buy Price Per Share</label>
+        <div class="input-wrap"><input id="recOriginalBuy" type="number" value="695" step="1" oninput="calcRecovery()"></div>
+
+        <div class="calc-badge" style="margin-top:18px;">Second purchase after drop</div>
+        <div class="row2">
+          <div>
+            <label>Additional Investment (USD)</label>
+            <div class="input-wrap"><input id="recAdditionalInvestment" type="number" value="15000" step="1000" oninput="calcRecovery()"></div>
+          </div>
+          <div>
+            <label>Additional Buy Price</label>
+            <div class="input-wrap"><input id="recAdditionalBuy" type="number" value="690" step="1" oninput="calcRecovery()"></div>
+          </div>
+        </div>
+
+        <div class="calc-badge" style="margin-top:18px;">Profit table</div>
+        <div class="row2">
+          <div>
+            <label>Future Price From</label>
+            <div class="input-wrap"><input id="recFutureFrom" type="number" value="697" step="1" oninput="calcRecovery()"></div>
+          </div>
+          <div>
+            <label>Future Price To</label>
+            <div class="input-wrap"><input id="recFutureTo" type="number" value="705" step="1" oninput="calcRecovery()"></div>
+          </div>
+        </div>
+
+        <label>Price Step</label>
+        <div class="input-wrap"><input id="recFutureStep" type="number" value="1" step="1" oninput="calcRecovery()"></div>
+
+        <button class="calculate" type="button" onclick="calcRecovery()">CALCULATE BREAK-EVEN & RETURNS</button>
+        <div class="recovery-note">This calculator shows your new average cost after the second purchase, the price needed to reach $0 profit/loss, and your profit/return at future prices like $697, $698, $699, etc.</div>
+      </div>
+
+      <div class="recovery-summary">
+        <div class="calc-badge">Break-even stock price</div>
+        <div class="recovery-main" id="recBreakEvenPrice">$0</div>
+        <div class="recovery-sub" id="recSummaryText">This is the stock price needed to be at $0 profit/loss after your second purchase.</div>
+
+        <div class="recovery-grid">
+          <div class="recovery-tile"><span>Original Shares</span><b id="recOriginalShares">0</b></div>
+          <div class="recovery-tile"><span>Additional Shares</span><b id="recAdditionalShares">0</b></div>
+          <div class="recovery-tile"><span>Total Shares</span><b id="recTotalShares">0</b></div>
+          <div class="recovery-tile"><span>Total Invested</span><b id="recTotalInvested">$0</b></div>
+          <div class="recovery-tile"><span id="recDropLossLabel">Loss at Add Buy Price</span><b id="recDropLoss">$0</b></div>
+          <div class="recovery-tile"><span>New Average Cost</span><b id="recAverageCost">$0</b></div>
+        </div>
+
+        <div class="recovery-table-wrap">
+          <table class="recovery-table">
+            <thead><tr><th>Future Price</th><th>Portfolio Value</th><th>Profit / Loss</th><th>Return</th></tr></thead>
+            <tbody id="recProfitTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+const stateInfo = {
+  HI:{name:"Hawaii", rate:.11},
+  FL:{name:"Florida", rate:0},
+  TX:{name:"Texas", rate:0}
+};
+
+function money(n){
+  const sign = n < 0 ? "-" : "";
+  return sign + "$" + Math.abs(n).toLocaleString(undefined,{maximumFractionDigits:2});
+}
+function pct(n){ return n.toFixed(2) + "%"; }
+
+function stepInput(id, direction){
+  const input=document.getElementById(id);
+  const step=parseFloat(input.step)||1;
+  const current=parseFloat(input.value || input.placeholder || 0);
+  const next=Math.max(0, current + direction * step);
+  input.value = step % 1 === 0 ? next.toFixed(0) : next.toFixed(2);
+  calc();
+  if (typeof calcDiscount === "function") calcDiscount();
+  if (typeof calcInterest === "function") calcInterest();
+  if (typeof calcPropertyTax === "function") calcPropertyTax();
+    if (typeof calcSameProfit === "function") calcSameProfit();
+    if (typeof calcAverageDown === "function")   if (typeof calcAverageDown === "function")     if (typeof calcSameProfit === "function") calcSameProfit();
+  if (typeof calcSameProfit === "function") calcSameProfit();
+}
+
+function getSelectedState(){
+  return document.querySelector('input[name="stateTax"]:checked').value;
+}
+
+function calc(){
+  const investment=parseFloat(document.getElementById("investment").value||0);
+  const buy=parseFloat(document.getElementById("buy").value||0);
+  const sell=parseFloat(document.getElementById("sell").value||0);
+  const federalRate=parseFloat(document.getElementById("federalRate").value||0)/100;
+  const selectedState=getSelectedState();
+  const stateRate=stateInfo[selectedState].rate;
+
+  if(investment<=0 || buy<=0 || sell<=0){
+    return;
+  }
+
+  const shares=investment/buy;
+  const portfolio=shares*sell;
+  const profit=portfolio-investment;
+  const returnPct=(profit/investment)*100;
+  const taxableProfit=Math.max(profit,0);
+  const federalTax=taxableProfit*federalRate;
+  const stateTax=taxableProfit*stateRate;
+  const totalTax=federalTax+stateTax;
+  const afterTax=profit-totalTax;
+  const gainPerShare=sell-buy;
+  const breakEven= buy + (totalTax/shares);
+  const finalProfit=afterTax;
+
+  setText("profit", money(profit));
+  setText("totalBalance", money(portfolio));
+  setText("returnPct", pct(returnPct));
+  setText("shares", shares.toLocaleString(undefined,{maximumFractionDigits:4}));
+  setText("gainPerShare", money(gainPerShare));
+  setText("federalTax", money(federalTax));
+  setText("stateTax", money(stateTax));
+  setText("totalTax", money(totalTax));
+  setText("afterTax", money(afterTax));
+  setText("finalProfit", money(finalProfit));
+  setText("breakEven", money(breakEven));
+  setText("heroProfit", money(finalProfit));
+  setText("heroText", "Estimated profit after federal and state tax.");
+  setText("miniState", stateInfo[selectedState].name);
+  setText("miniTaxMode", document.getElementById("holdingPeriod").value === "short" ? "Short-term" : "Long-term");
+
+  const taxDrag = taxableProfit > 0 ? Math.min(100,(totalTax/taxableProfit)*100) : 0;
+  setText("taxDragLabel", pct(taxDrag));
+  document.getElementById("taxDragBar").style.width = taxDrag + "%";
+
+  document.getElementById("profit").className = profit >= 0 ? "positive" : "negative";
+  document.getElementById("finalProfit").className = finalProfit >= 0 ? "positive" : "negative";
+}
+
+function setText(id,text){ document.getElementById(id).textContent=text; }
+
+
+let quickCalcValue = "";
+
+function quickCalcFormatExpression(value){
+  return value
+    .replaceAll("*","×")
+    .replaceAll("/","÷");
+}
+
+function quickCalcInput(char){
+  const operators = "+-*/%";
+  const last = quickCalcValue.slice(-1);
+
+  if (char === "." && quickCalcValue.split(/[+\-*/%]/).pop().includes(".")) return;
+  if (operators.includes(char) && (quickCalcValue === "" || operators.includes(last))) {
+    if (quickCalcValue !== "") quickCalcValue = quickCalcValue.slice(0, -1) + char;
+    quickCalcUpdate();
+    return;
+  }
+
+  quickCalcValue += char;
+  quickCalcUpdate();
+}
+
+function quickCalcBack(){
+  quickCalcValue = quickCalcValue.slice(0, -1);
+  quickCalcUpdate();
+}
+
+function quickCalcClear(){
+  quickCalcValue = "";
+  quickCalcUpdate();
+}
+
+function quickCalcEquals(){
+  if (!quickCalcValue) return;
+  try{
+    const safe = quickCalcValue.replace(/[^0-9+\-*/%.()]/g, "");
+    const result = Function('"use strict"; return (' + safe + ')')();
+    if (!Number.isFinite(result)) throw new Error("Invalid result");
+    quickCalcValue = String(Math.round(result * 100000000) / 100000000);
+    document.getElementById("quickCalcExpression").textContent = quickCalcFormatExpression(safe);
+    document.getElementById("quickCalcResult").textContent = "$" + Number(result).toLocaleString(undefined,{maximumFractionDigits:2});
+  }catch(e){
+    document.getElementById("quickCalcResult").textContent = "Error";
+  }
+}
+
+function quickCalcUpdate(){
+  document.getElementById("quickCalcExpression").textContent = quickCalcValue ? quickCalcFormatExpression(quickCalcValue) : "0";
+  document.getElementById("quickCalcResult").textContent = quickCalcValue ? quickCalcFormatExpression(quickCalcValue) : "$0";
+}
+
+
+
+
+const propertyTaxRates = {
+  "Florida":0.0076,
+  "Texas":0.0149,
+  "Hawaii":0.0027,
+  "Alabama":0.0038,
+  "Alaska":0.0111,
+  "Arizona":0.0048,
+  "Arkansas":0.0055,
+  "California":0.0070,
+  "Colorado":0.0048,
+  "Connecticut":0.0181,
+  "Delaware":0.0050,
+  "Georgia":0.0077,
+  "Idaho":0.0049,
+  "Illinois":0.0201,
+  "Indiana":0.0074,
+  "Iowa":0.0139,
+  "Kansas":0.0129,
+  "Kentucky":0.0075,
+  "Louisiana":0.0055,
+  "Maine":0.0102,
+  "Maryland":0.0097,
+  "Massachusetts":0.0107,
+  "Michigan":0.0125,
+  "Minnesota":0.0102,
+  "Mississippi":0.0072,
+  "Missouri":0.0085,
+  "Montana":0.0072,
+  "Nebraska":0.0149,
+  "Nevada":0.0047,
+  "New Hampshire":0.0166,
+  "New Jersey":0.0211,
+  "New Mexico":0.0070,
+  "New York":0.0155,
+  "North Carolina":0.0066,
+  "North Dakota":0.0099,
+  "Ohio":0.0131,
+  "Oklahoma":0.0080,
+  "Oregon":0.0081,
+  "Pennsylvania":0.0130,
+  "Rhode Island":0.0121,
+  "South Carolina":0.0048,
+  "South Dakota":0.0106,
+  "Tennessee":0.0050,
+  "Utah":0.0052,
+  "Vermont":0.0159,
+  "Virginia":0.0073,
+  "Washington":0.0081,
+  "West Virginia":0.0053,
+  "Wisconsin":0.0142,
+  "Wyoming":0.0057
+};
+
+function calcPropertyTax(){
+  const homeValue=parseFloat(document.getElementById("propertyHomeValue").value||0);
+  const state=document.getElementById("propertyState").value;
+  const rate=propertyTaxRates[state]||0;
+
+  if(homeValue < 0){
+    return;
+  }
+
+  const yearly=homeValue*rate;
+  const monthly=yearly/12;
+  const daily=yearly/365;
+
+  document.getElementById("propertyTaxYearly").textContent=money(yearly);
+  document.getElementById("propertyTaxYearlyTile").textContent=money(yearly);
+  document.getElementById("propertyTaxMonthly").textContent=money(monthly);
+  document.getElementById("propertyTaxDaily").textContent=money(daily);
+  document.getElementById("propertyTaxRate").textContent=(rate*100).toFixed(2)+"%";
+  document.getElementById("propertyTaxStateOut").textContent=state;
+  document.getElementById("propertyHomeValueOut").textContent=money(homeValue);
+}
+
+function calcInterest(){
+  const deposit=parseFloat(document.getElementById("interestDeposit").value||0);
+  const annualRate=parseFloat(document.getElementById("interestRate").value||0);
+
+  if(deposit < 0 || annualRate < 0){
+    return;
+  }
+
+  const rate=annualRate/100;
+  const yearly=deposit*rate;
+  const monthly=yearly/12;
+  const daily=yearly/365;
+  const balance=deposit+yearly;
+
+  document.getElementById("interestDaily").textContent=money(daily);
+  document.getElementById("interestMonthly").textContent=money(monthly);
+  document.getElementById("interestYearly").textContent=money(yearly);
+  document.getElementById("interestYearlyTile").textContent=money(yearly);
+  document.getElementById("interestBalance").textContent=money(balance);
+  document.getElementById("interestDepositOut").textContent=money(deposit);
+  document.getElementById("interestRateOut").textContent=annualRate.toFixed(2).replace(/\.00$/,"")+"%";
+}
+
+function calcDiscount(){
+  const original=parseFloat(document.getElementById("discountOriginal").value||0);
+  const percent=parseFloat(document.getElementById("discountPercent").value||0);
+
+  if(original < 0 || percent < 0){
+    return;
+  }
+
+  const savings=original*(percent/100);
+  const final=Math.max(0, original-savings);
+
+  document.getElementById("discountFinal").textContent=money(final);
+  document.getElementById("discountSavings").textContent=money(savings);
+  document.getElementById("discountRate").textContent=percent.toFixed(2).replace(/\.00$/,"")+"%";
+  document.getElementById("discountOriginalOut").textContent=money(original);
+  document.getElementById("discountTotalOut").textContent=money(final);
+}
+
+
+function calcSameProfit(){
+  const originalInvestment=parseFloat(document.getElementById("sameOriginalInvestment").value||0);
+  const originalBuy=parseFloat(document.getElementById("sameOriginalBuy").value||0);
+  const originalSell=parseFloat(document.getElementById("sameOriginalSell").value||0);
+  const newBuy=parseFloat(document.getElementById("sameNewBuy").value||0);
+  const newSell=parseFloat(document.getElementById("sameNewSell").value||0);
+
+  if(originalInvestment <= 0 || originalBuy <= 0 || originalSell <= 0 || newBuy <= 0 || newSell <= 0){ return; }
+
+  const originalShares=originalInvestment/originalBuy;
+  const targetProfit=originalShares*(originalSell-originalBuy);
+  const newGainPerShare=newSell-newBuy;
+
+  document.getElementById("sameTargetProfitBig").textContent=money(targetProfit);
+  document.getElementById("sameOriginalProfit").textContent=money(targetProfit);
+  document.getElementById("sameOriginalShares").textContent=originalShares.toLocaleString(undefined,{maximumFractionDigits:4});
+  document.getElementById("sameNewGain").textContent=money(newGainPerShare);
+
+  if(newGainPerShare <= 0 || targetProfit <= 0){
+    document.getElementById("sameRequiredInvestment").textContent="Needs positive gain";
+    document.getElementById("sameNewShares").textContent="0";
+    document.getElementById("sameNewReturn").textContent="0%";
+    document.getElementById("sameProfitCheck").textContent="$0";
+    return;
+  }
+
+  const newSharesNeeded=targetProfit/newGainPerShare;
+  const requiredInvestment=newSharesNeeded*newBuy;
+  const newReturn=(newGainPerShare/newBuy)*100;
+  const profitCheck=newSharesNeeded*newGainPerShare;
+
+  document.getElementById("sameRequiredInvestment").textContent=money(requiredInvestment);
+  document.getElementById("sameNewShares").textContent=newSharesNeeded.toLocaleString(undefined,{maximumFractionDigits:4});
+  document.getElementById("sameNewReturn").textContent=newReturn.toFixed(2)+"%";
+  document.getElementById("sameProfitCheck").textContent=money(profitCheck);
+}
+
+
+
+document.querySelectorAll("input,select").forEach(el=>{
+  el.addEventListener("input", () => {
+    calc();
+    if (typeof calcDiscount === "function") calcDiscount();
+    if (typeof calcInterest === "function") calcInterest();
+    if (typeof calcPropertyTax === "function") calcPropertyTax();
+  });
+  el.addEventListener("change", () => {
+    calc();
+    if (typeof calcDiscount === "function") calcDiscount();
+    if (typeof calcInterest === "function") calcInterest();
+    if (typeof calcPropertyTax === "function") calcPropertyTax();
+  });
+});
+calc();
+calcDiscount();
+calcInterest();
+calcPropertyTax();
+calcSameProfit();
+
+function calcRecovery(){
+  const originalInvestment=parseFloat(document.getElementById("recOriginalInvestment")?.value||0);
+  const originalBuy=parseFloat(document.getElementById("recOriginalBuy")?.value||0);
+  const additionalInvestment=parseFloat(document.getElementById("recAdditionalInvestment")?.value||0);
+  const additionalBuy=parseFloat(document.getElementById("recAdditionalBuy")?.value||0);
+  const futureFrom=parseFloat(document.getElementById("recFutureFrom")?.value||0);
+  const futureTo=parseFloat(document.getElementById("recFutureTo")?.value||0);
+  const futureStep=parseFloat(document.getElementById("recFutureStep")?.value||1);
+  if(originalInvestment<=0||originalBuy<=0||additionalInvestment<0||additionalBuy<=0||futureStep<=0){return;}
+  const originalShares=originalInvestment/originalBuy;
+  const additionalShares=additionalInvestment/additionalBuy;
+  const totalShares=originalShares+additionalShares;
+  const totalInvested=originalInvestment+additionalInvestment;
+  const breakEvenPrice=totalInvested/totalShares;
+  const lossAtSecondBuyPrice=(originalShares*additionalBuy)-originalInvestment;
+  document.getElementById("recBreakEvenPrice").textContent=money(breakEvenPrice);
+  document.getElementById("recSummaryText").textContent="After adding "+money(additionalInvestment)+" at "+money(additionalBuy)+", your break-even price becomes "+money(breakEvenPrice)+".";
+  document.getElementById("recOriginalShares").textContent=originalShares.toLocaleString(undefined,{maximumFractionDigits:4});
+  document.getElementById("recAdditionalShares").textContent=additionalShares.toLocaleString(undefined,{maximumFractionDigits:4});
+  document.getElementById("recTotalShares").textContent=totalShares.toLocaleString(undefined,{maximumFractionDigits:4});
+  document.getElementById("recTotalInvested").textContent=money(totalInvested);
+  document.getElementById("recDropLoss").textContent=money(lossAtSecondBuyPrice);
+  document.getElementById("recDropLossLabel").textContent="Loss at " + money(additionalBuy) + " Drop";
+  document.getElementById("recAverageCost").textContent=money(breakEvenPrice);
+  const table=document.getElementById("recProfitTable");
+  table.innerHTML="";
+  const start=Math.min(futureFrom,futureTo);
+  const end=Math.max(futureFrom,futureTo);
+  let rows=0;
+  for(let price=start; price<=end+0.000001 && rows<80; price+=futureStep){
+    const value=totalShares*price;
+    const profit=value-totalInvested;
+    const ret=(profit/totalInvested)*100;
+    const cls=profit>=0?"recovery-positive":"recovery-negative";
+    const tr=document.createElement("tr");
+    tr.innerHTML="<td>"+money(price)+"</td><td>"+money(value)+"</td><td class='"+cls+"'>"+money(profit)+"</td><td class='"+cls+"'>"+ret.toFixed(2)+"%</td>";
+    table.appendChild(tr);
+    rows++;
+  }
+}
+
+calcRecovery();
+</script>
+</body>
+</html>
